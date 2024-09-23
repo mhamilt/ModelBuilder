@@ -1,5 +1,6 @@
 package unlekker.util;
 
+import controlP5.ControlEvent;
 import processing.core.PApplet;
 import unlekker.modelbuilder.*;
 import unlekker.util.*;
@@ -17,6 +18,7 @@ public class UCameraTransition {
 		INTERDBLSIGISMOID=2,INTEREASEIN=3,INTERQUAD=4,INTEREASEINOUT=5;
 	long startRenderTime;
 	UProgressInfo progress=new UProgressInfo();
+	private int viewNum;
 
 	public UCameraTransition(PApplet _p,UNav3D _nav,String s) {
 		p=_p;		
@@ -36,13 +38,12 @@ public class UCameraTransition {
 		p=_p;		
 
 		theCam=new UNav3D(p,false);
-		cam=new UNav3D[3];
 		nav=new UNav3D(p);
-		for(int i=0; i<cam.length; i++) {
-			cam[i]=new UNav3D(p,false);
-			setCam(i);
-		}
+		nav.setTranslation(p.width/2,p.height/2,0);
+		
+		setViewNum(3);
 		camGoal=1200;
+		
 	}
 
 	public void run() {
@@ -88,6 +89,12 @@ public class UCameraTransition {
 //  	in=in.replace(',', ' ');
   	cam[id].set(in); 
   }  	
+  
+	public void setGUI(USimpleGUI gui) {
+		this.theCam.setGUI(gui);
+	}
+
+
 
   public void setView(int id) {
   	nav.set(cam[id]); 
@@ -132,8 +139,8 @@ public class UCameraTransition {
 		if(!isRunning) camT=1;
 		else camT=camCnt/camGoal;	
 		
-		float T=camT*(float)(cam.length-1);
-		int camID=p.min((int)T,cam.length-2);
+		float T=camT*(float)(viewNum-1);
+		int camID=p.min((int)T,viewNum-2);
 		T=T-(float)(camID);
 		
 		/*
@@ -174,23 +181,54 @@ public class UCameraTransition {
 	
 	public String toDataString() {
 		String s="Transition";
-		for(int i=0; i<cam.length; i++) s+="\t"+cam[i].toStringData();
+		for(int i=0; i<viewNum; i++) s+="\t"+cam[i].toStringData();
 		s+="\t"+(int)camGoal;
 		return s;
 	}
 	
-	public void set(String in) {
+	public UCameraTransition set(String in) {
 		String tok[]=p.split(in, "\t");
-		UUtil.log("TransitionMulti.set "+cam.length+" "+UUtil.toString(tok));
+		UUtil.log("TransitionMulti.set "+viewNum+" "+UUtil.toString(tok));
 		
 		int tokId=1;
-		for(int i=0; i<cam.length; i++) setCam(i,tok[tokId++]);
+		for(int i=0; i<viewNum; i++) setCam(i,tok[tokId++]);
 		setDuration((float)UUtil.parseInt(tok[tokId++])/30f);
+		return this;
 	}
 
-	public void setCamT(float t) {
+	public UCameraTransition setCamT(float t) {
 		camT=t;
 		camCnt=t*camGoal;
 		doCam();
+		return this;
+	}
+
+	public UCameraTransition setViewNum(int viewNum) {
+		this.viewNum=viewNum;
+		cam=new UNav3D[viewNum];
+		
+		for(int i=0; i<viewNum; i++) {
+			cam[i]=new UNav3D(p,false);
+			setCam(i);
+		}
+
+		return this;
+	}
+
+	public void addGUI(USimpleGUI gui) {
+		String labels[]=new String[viewNum];
+		for(int i=0; i<labels.length; i++) labels[i]="Set cam "+i;
+		gui.addDropDown("camSetCam", labels, 120);
+		for(int i=0; i<labels.length; i++) labels[i]="Set view "+i;
+		gui.addDropDown("camSetView", labels, 120);
+		
+	}
+
+	public void controlEvent(ControlEvent ev) {
+	  if (ev.isGroup()) {
+	  	UUtil.log("UCam controlEvent - "+ev.group().value()+" "+ev.group());
+	  }
+
+		
 	}
 }

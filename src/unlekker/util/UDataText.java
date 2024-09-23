@@ -21,18 +21,28 @@ public class UDataText {
 	public String[] str;
 	public int numStr;
 
-	public String DELIM="\t",tokens[],parseStr;
+	public static String DELIM="\t";
+	public String tokens[];
+	public String parseStr;
 	public static String COMMENT="# ",SPACER="\t",BLOCKSPACER="|";
 	public int parseLine,currToken,numToken;
 	
-	public static int DIVIDERSTR=0,ENDSTR=1,TOKENSTR=2;
+	public static int EOF=-1,STRING=0,DIVIDERSTR=3,ENDSTR=1,TOKENSTR=2,EMPTYSTRING=-2;
 	
 	public UDataText() {
 		numStr=0;
 		strbuf=new StringBuffer();
 		parseLine=0;		
 	}
-	
+
+	public UDataText(String s[]) {
+		numStr=0;
+		strbuf=new StringBuffer();
+		parseLine=0;		
+		add(s);
+		toArray();
+	}
+
 	////////////////////////////////
 	// PARSING
 	
@@ -62,9 +72,12 @@ public class UDataText {
 		else {
 			parseStr=null;
 			endParse();
-			return -1;
+			return EOF;
 		}
 
+		numToken=0;
+		currToken=-1;
+		
 		if(parseStr.equals(DIVIDER)) return DIVIDERSTR;
 		else if(parseStr.equals(ENDBLOCK)) return ENDSTR;
 		else if(parseStr.indexOf(DELIM)!=-1) {
@@ -77,9 +90,10 @@ public class UDataText {
 			tokens=new String[] {parseStr};
 			numToken=1;
 			currToken=0;
+			return TOKENSTR;
 		}
-
-		return -1;
+		if(parseStr.length()==0) return EMPTYSTRING;
+		return STRING;
 
 	}
 
@@ -94,6 +108,7 @@ public class UDataText {
 
 	
 	public String getString() {
+		if(currToken<0 || tokens==null) return null;
 		return tokens[currToken++];
 	}
 
@@ -101,6 +116,11 @@ public class UDataText {
 		return UUtil.parseInt(tokens[currToken++]);
 	}
 
+	public long getLong() {
+		return UUtil.parseLong(tokens[currToken++]);
+	}
+
+	
 	public boolean getBool() {
 		String bool=tokens[currToken++];
 		if(bool.equals("true")) return true;
@@ -168,6 +188,20 @@ public class UDataText {
 		if(dataLinePos>0) strbuf.append(SPACER+s);
 		else strbuf.append(s);
 		dataLinePos++;
+		return this;
+	}
+
+	public UDataText add(String s[]) {
+		for(int i=0; i<s.length; i++) {
+			if(s[i]!=null) addLn(s[i]);
+		}
+		return this;
+	}
+
+	public UDataText add(ArrayList<String> s) {
+		for(String theString : s) {
+			if(theString!=null) addLn(theString);
+		}
 		return this;
 	}
 
@@ -248,15 +282,17 @@ public class UDataText {
 		doAppend=false;
 	}
 
-	public void save() {
+	public UDataText save() {
 		save(filename,false);
+		return this;
 	}
 
-	public void save(String _filename) {
+	public UDataText save(String _filename) {
 		save(_filename,false);
+		return this;
 	}
 	
-	public void save(String _filename,boolean _append) {
+	public UDataText save(String _filename,boolean _append) {
 		setFileOptions(_filename, _append);
 	
 		try {
@@ -279,8 +315,9 @@ public class UDataText {
 		 e.printStackTrace();
 	  }
 	  
+		return this;
 	}
-	
+
 	public UDataText load(String _filename) {
   	String ln;
 		try {
@@ -352,8 +389,5 @@ public class UDataText {
 		String str[]=PApplet.split(arr, delim);
 	  return str;
   }
-
-	
-	
 
 }

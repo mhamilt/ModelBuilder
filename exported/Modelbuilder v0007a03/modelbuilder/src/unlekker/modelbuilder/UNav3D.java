@@ -39,6 +39,8 @@ public class UNav3D {
 	public float rotSpeed=5,transSpeed=5;
 	public boolean isParentPApplet=true;
 	public boolean shiftIsDown=false;
+	public USimpleGUI gui;
+	public boolean enabled=true;
 	
 	public UNav3D(PApplet _p) {
 		init(_p,true);
@@ -54,7 +56,9 @@ public class UNav3D {
 		init(_p,_doEvents);
 	}
 	
-	
+	public void setGUI(USimpleGUI gui) {
+		this.gui=gui;
+	}
 	
 	public void init(PApplet _p,boolean _doEvents) {
 		p=_p;		
@@ -87,6 +91,20 @@ public class UNav3D {
 		p.unregisterMouseEvent(this);
 	}
 
+	public void transformPoint(UVec3 v) { 
+  	if(rot.y!=0) v.rotateY(rot.y);
+  	if(rot.x!=0) v.rotateX(rot.x);
+  	if(rot.z!=0) v.rotateZ(rot.z);
+  	v.add(trans.x,trans.y,trans.z);
+  }
+
+	public void untransformPoint(UVec3 v) { 
+  	v.sub(trans.x,trans.y,trans.z);
+  	if(rot.z!=0) v.rotateZ(-rot.z);
+  	if(rot.x!=0) v.rotateX(-rot.x);
+  	if(rot.y!=0) v.rotateY(-rot.y);
+  }
+
 	public void doTransforms() { 
   	p.translate(trans.x,trans.y,trans.z);
   	if(rot.y!=0) p.rotateY(rot.y);
@@ -95,17 +113,25 @@ public class UNav3D {
   }
   
 	public void keyEvent(KeyEvent ev) {
+		if(!enabled) return;
+		
 		if(ev.getID() == KeyEvent.KEY_PRESSED) keyPressed();
 		else if(ev.getID() == KeyEvent.KEY_RELEASED) keyReleased();
 	}
 	
 	public void mouseEvent(MouseEvent ev) {
+		if(!enabled) return;
 		if (ev.getID() == MouseEvent.MOUSE_DRAGGED) {
 			mouseDragged();
 		}
 	}
 	
 	public void mouseDragged() {
+		if(gui!=null && gui.isMouseOver()) return;
+		
+  	float mult=1;
+  	if(p.keyEvent!=null && p.keyEvent.isControlDown()) mult=10; 
+
 //		if(isParentPApplet) {
 //      rot.y+=p.radians(p.mouseX-p.pmouseX);
 //      rot.x+=p.radians(p.mouseY-p.pmouseY);
@@ -114,8 +140,8 @@ public class UNav3D {
 		
     // if shift is down do pan instead of rotate
     if(shiftIsDown) {
-      trans.x+=p.radians(p.mouseX-p.pmouseX)*5*transSpeed;
-      trans.y+=p.radians(p.mouseY-p.pmouseY)*5*transSpeed;
+      trans.x+=p.radians(p.mouseX-p.pmouseX)*5*transSpeed*mult;
+      trans.y+=p.radians(p.mouseY-p.pmouseY)*5*transSpeed*mult;
     }
     // calculate rot.x and rot.Y by the relative change
     // in mouse position
@@ -138,29 +164,32 @@ public class UNav3D {
 //  		UUtil.log("Shift down");
   	}
   	
+  	float mult=1;
+  	if(p.keyEvent!=null && p.keyEvent.isControlDown()) mult=10; 
+
     if(p.key==p.CODED) {
       // check to see if CTRL is pressed
       if(p.keyEvent.isControlDown()) {
         // do zoom in the Z axis
-        if(p.keyCode==p.UP) trans.z+=transSpeed;
-        if(p.keyCode==p.DOWN) trans.z-=transSpeed;
-        if(p.keyCode==p.LEFT) rot.z+=p.radians(rotSpeed);
-        if(p.keyCode==p.RIGHT) rot.z-=p.radians(rotSpeed);
+        if(p.keyCode==p.UP) trans.z+=transSpeed*mult;
+        if(p.keyCode==p.DOWN) trans.z-=transSpeed*mult;
+        if(p.keyCode==p.LEFT) rot.z+=p.radians(rotSpeed*mult);
+        if(p.keyCode==p.RIGHT) rot.z-=p.radians(rotSpeed*mult);
       }
       // check to see if CTRL is pressed
       else if(p.keyEvent.isShiftDown()) {
         // do translations in X and Y axis
-        if(p.keyCode==p.UP) trans.y-=transSpeed;
-        if(p.keyCode==p.DOWN) trans.y+=transSpeed;
-        if(p.keyCode==p.RIGHT) trans.x+=transSpeed;
-        if(p.keyCode==p.LEFT) trans.x-=transSpeed;
+        if(p.keyCode==p.UP) trans.y-=transSpeed*mult;;
+        if(p.keyCode==p.DOWN) trans.y+=transSpeed*mult;;
+        if(p.keyCode==p.RIGHT) trans.x+=transSpeed*mult;;
+        if(p.keyCode==p.LEFT) trans.x-=transSpeed*mult;;
       }
       else {
         // do rotations around X and Y axis
-        if(p.keyCode==p.UP) rot.x+=p.radians(rotSpeed);
-        if(p.keyCode==p.DOWN) rot.x-=p.radians(rotSpeed);
-        if(p.keyCode==p.RIGHT) rot.y+=p.radians(rotSpeed);
-        if(p.keyCode==p.LEFT) rot.y-=p.radians(rotSpeed);
+        if(p.keyCode==p.UP) rot.x+=p.radians(rotSpeed*mult);
+        if(p.keyCode==p.DOWN) rot.x-=p.radians(rotSpeed*mult);
+        if(p.keyCode==p.RIGHT) rot.y+=p.radians(rotSpeed*mult);
+        if(p.keyCode==p.LEFT) rot.y-=p.radians(rotSpeed*mult);
       }
     }
     else {
@@ -211,7 +240,11 @@ public class UNav3D {
   }
 
   public void mouseWheel(float step) {
-    trans.z=trans.z+step*5;
+		if(!enabled) return;
+		
+  	if(p.keyEvent!=null && p.keyEvent.isControlDown())
+  		trans.z=trans.z+step*50;
+  	else trans.z=trans.z+step*5;
   }
   
   public String toStringData() {
@@ -247,5 +280,13 @@ public class UNav3D {
 //		rot=UVec3.parse("<"+tok[0].substring(0,tok[0].indexOf('>')));
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void enable() {
+		enabled=true;		
+	}
+
+	public void disable() {
+		enabled=false;		
 	}
 }

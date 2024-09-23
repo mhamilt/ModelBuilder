@@ -25,6 +25,7 @@ import processing.core.*;
  *
  */
 public class UIO implements Serializable, PConstants {
+	private static final int MB=1024*1024;
 	public static String currentDir;
 	public static UIO ioInstance;
 	public static boolean useGZIP=false; 
@@ -111,7 +112,7 @@ public class UIO implements Serializable, PConstants {
 			FileDialog fd = new FileDialog( 
 			    (Frame)p.frame, "Open", 
 			    FileDialog.LOAD);
-			fd.setDirectory("data");
+			fd.setDirectory(path);
 
 			fd.setVisible(true);
 			s=fd.getDirectory()+DIRCHAR+fd.getFile();
@@ -121,19 +122,19 @@ public class UIO implements Serializable, PConstants {
 //			Util.log("Save file = " + filedialog.getFile());
 //			Util.log("Save directory = " + filedialog.getDirectory()); 
 
-			// create a file chooser
-			JFileChooser fc=new JFileChooser(path);
-
-			// in response to a button click:
-			int returnVal=fc.showOpenDialog(p);
-
-			if (returnVal==JFileChooser.APPROVE_OPTION) {
-				File file=fc.getSelectedFile();
-				s=file.getCanonicalPath();
-				UUtil.log("getFilenameChooserDialog returned: "+s);
-			} else {
-				UUtil.logErr("Open command cancelled by user.");
-			}
+//			// create a file chooser
+//			JFileChooser fc=new JFileChooser(path);
+//			fc.setFileSelectionMode(fc.DIRECTORIES_ONLY);
+//			// in response to a button click:
+//			int returnVal=fc.showOpenDialog(p);
+//
+//			if (returnVal==JFileChooser.APPROVE_OPTION) {
+//				File file=fc.getSelectedFile();
+//				s=file.getCanonicalPath();
+//				UUtil.log("getFilenameChooserDialog returned: "+s);
+//			} else {
+//				UUtil.logErr("Open command cancelled by user.");
+//			}
 			
 			
 		} catch (Exception e) {
@@ -177,6 +178,7 @@ public class UIO implements Serializable, PConstants {
   public static String getCurrentDir() {
     try {
     	currentDir=new File (".").getCanonicalPath();
+    	currentDir=currentDir.replace('\\',UIO.DIRCHAR);
     }
     catch(Exception e) {
       e.printStackTrace();
@@ -185,6 +187,15 @@ public class UIO implements Serializable, PConstants {
     return currentDir;
   }
 
+  public static String savePath(String name) {
+  	name=getAbsolutePath(name);
+  	File f=new File(name);
+  	String parent=f.getParent();
+  	if(parent!=null) new File(parent).mkdirs();
+  	
+  	return name;
+  }
+  
   /**
    * Finds the canonical path of the current directory.
    * @return Name of current directoy
@@ -239,7 +250,7 @@ public class UIO implements Serializable, PConstants {
   public static String noPath(String name) {
   	int pos=name.lastIndexOf(DIRCHAR);
   	if(pos<0) pos=name.lastIndexOf(DIRCHARDEFAULT);
-  	UUtil.log(pos+" "+name.length()+" "+name);
+//  	UUtil.log(pos+" "+name.length()+" "+name);
 
   	return name.substring(pos+1);
   }
@@ -343,10 +354,11 @@ public class UIO implements Serializable, PConstants {
   public static String getFileSizeString(float len) {
   	String s;
     float kb=(float)len;
-    if(kb<1) return UUtil.nf(kb,1,1)+" kb";
-    else if(kb<1000) return UUtil.nf(kb,0,0)+" kb";
-    
-    return UUtil.nf(kb/1024f,0,1)+" MB";
+    if(kb<1) return UUtil.nf(kb,1,1)+" b";
+    else if(kb<1024) return UUtil.nf(kb,0,0)+" b";
+    else if(kb<MB) return UUtil.nf(kb/1024f,0,1)+" kb";
+
+    return UUtil.nf(kb/MB,0,1)+" MB";
   }
 
   /**

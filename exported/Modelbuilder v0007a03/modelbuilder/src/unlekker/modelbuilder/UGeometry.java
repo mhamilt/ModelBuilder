@@ -32,7 +32,7 @@ import unlekker.util.*;
 public class UGeometry implements UConstants {
 	public static String NONAME="No name";
 	
-	protected boolean checkForDuplicates=false;
+	public boolean doNoDuplicates=false;
 	public String name;
 	
 	private int bvCnt,bvCol[],shapeType=-1;
@@ -108,10 +108,24 @@ public class UGeometry implements UConstants {
 		return g;
 	}
 	
-	public static void drawMultiple(PApplet p,UGeometry g[]) {
+	public static void draw(PApplet p,UGeometry g[]) {
 		for(int i=0; i<g.length; i++) if(g[i]!=null) g[i].draw(p);
 	}
 	
+	public void drawFaceNormals(PApplet p,float len) {
+		p.beginShape(p.LINES);
+		for(int i=0; i<faceNum; i++) {
+			if(face[i].n==null) face[i].calcNormal(); 
+			if(face[i].centroid==null) face[i].calcCentroid(); 
+			p.vertex(face[i].centroid.x,face[i].centroid.y,face[i].centroid.z);
+			p.vertex(
+					face[i].centroid.x+face[i].n.x*len,
+					face[i].centroid.y+face[i].n.y*len,
+					face[i].centroid.z+face[i].n.z*len);
+		}
+		p.endShape();
+	}
+
 	/**
 	 * Sets the contents of this UGeometry object by 
 	 * copying the input geometry.  
@@ -275,7 +289,7 @@ public class UGeometry implements UConstants {
 	public UGeometry quadStrip(UVertexList vl[],int vln) {
 		if(vln<2) return this;
 
-		for(int i=0; i<vln-1; i++) {
+		for(int i=0; i<vln-1; i++) if(vl[i]!=null && vl[i+1]!=null){
 			quadStrip(vl[i], vl[i+1]);
 		}		
 		
@@ -616,6 +630,11 @@ public class UGeometry implements UConstants {
 		return this;
 	}
 	
+	public void noDuplicates() {
+		doNoDuplicates=true;
+		
+	}
+	
 	public void removeDuplicateFaces() {
 		boolean ok;
 		for(int i=1; i<faceNum; i++) {
@@ -677,6 +696,7 @@ public class UGeometry implements UConstants {
 	 */
 	public int addVertexToMasterList(UVec3 vv) {
 		if(vert==null) vert=new UVertexList();
+		if(doNoDuplicates) vert.doNoDuplicates=true;
 		int id=vert.addGetID(vv);
 		return id;
 	}
@@ -689,6 +709,7 @@ public class UGeometry implements UConstants {
 	 */
 	public int [] addVerticesToMasterList(UVec3 vv[]) {
 		if(vert==null) vert=new UVertexList();
+		if(doNoDuplicates) vert.doNoDuplicates=true;
 		int id[]=new int[vv.length];
 		for(int i=0; i<vv.length; i++) id[i]=vert.addGetID(vv[i]);
 		return id;
@@ -715,31 +736,70 @@ public class UGeometry implements UConstants {
 		quad[quadNum++]=uQuad;
 	}
 
+	public void draw(PApplet p) {
+		draw(p,false);
+	}
+	
 
 	/**
 	 * Draws all faces contained in this UGeometry object.
 	 * @param p Reference to PApplet instance to draw into
 	 */
 
-	public void draw(PApplet p) {
+	public void draw(PApplet p,boolean useNormals) {
 		UFace f;
 		int fid=0;
 		UVec3 vv;
 
-		p.beginShape(TRIANGLES);		
-		for(int i=0; i<faceNum; i++) {			
-			f=face[i];
-			fid=0;
-			vv=vert.v[f.vid[fid++]];
-			p.vertex(vv.x,vv.y,vv.z);
-			vv=vert.v[f.vid[fid++]];
-			p.vertex(vv.x,vv.y,vv.z);
-			vv=vert.v[f.vid[fid]];
-			p.vertex(vv.x,vv.y,vv.z);
+		if(p.g.getClass().getSimpleName().equals("PGraphicsJava2D")) {
+			p.beginShape(TRIANGLES);
+			for(int i=0; i<faceNum; i++) {			
+				f=face[i];
+				fid=0;
+				vv=vert.v[f.vid[fid++]];
+				p.vertex(vv.x,vv.y);
+				vv=vert.v[f.vid[fid++]];
+				p.vertex(vv.x,vv.y);
+				vv=vert.v[f.vid[fid]];
+				p.vertex(vv.x,vv.y);
+			}
+			p.endShape();
+
+			return;
 		}
+		
+		p.beginShape(TRIANGLES);		
+		if(useNormals)
+			for(int i=0; i<faceNum; i++) {			
+				f=face[i];
+				fid=0;
+				p.normal(f.n.x, f.n.y, f.n.z);
+				vv=vert.v[f.vid[fid++]];
+				p.vertex(vv.x,vv.y,vv.z);
+				vv=vert.v[f.vid[fid++]];
+				p.vertex(vv.x,vv.y,vv.z);
+				vv=vert.v[f.vid[fid]];
+				p.vertex(vv.x,vv.y,vv.z);
+			}
+		else 
+			for(int i=0; i<faceNum; i++) {			
+				f=face[i];
+				fid=0;
+				vv=vert.v[f.vid[fid++]];
+				p.vertex(vv.x,vv.y,vv.z);
+				vv=vert.v[f.vid[fid++]];
+				p.vertex(vv.x,vv.y,vv.z);
+				vv=vert.v[f.vid[fid]];
+				p.vertex(vv.x,vv.y,vv.z);
+			}
+		
 		p.endShape();		
 	}
 
+	/**
+	 * CURRENTLY BROKEN.
+	 * @param p
+	 */
 	public void drawFaceLabels(PApplet p) {
 		UVec3 pos=new UVec3(),head;
 		
@@ -805,7 +865,7 @@ public class UGeometry implements UConstants {
 	 * @param vl2
 	 */
 	public static void drawQuadstrip(PApplet p,UVertexList vl1,UVertexList vl2) {
-		if(p.g.getClass().getSimpleName().indexOf("Java2D")!=-1) {
+		if(p.g.getClass().getSimpleName().equals("PGraphicsJava2D")) {
 			p.beginShape(QUAD_STRIP);
 			for(int i=0; i<vl1.n; i++) {
 				p.vertex(vl1.v[i].x,vl1.v[i].y);
@@ -1014,16 +1074,22 @@ public class UGeometry implements UConstants {
 		return g;
 	}
 
-	public void calcBounds() {
+	public UGeometry calcBounds() {
 		if(bb==null) bb=new UBBox();
 		bb.calc(this);
+		return this;
  	}
 
 	public UGeometry calcFaceNormals() {
 		for(int i=0; i<faceNum; i++) face[i].calcNormal();
 		return this;
 	}
-	
+
+	public UGeometry calcFaceCentroids() {
+		for(int i=0; i<faceNum; i++) face[i].calcCentroid();
+		return this;
+	}
+
 	/**
 	 * Calculates bounding box and centers all faces by calling <code>translate(-bb.c.x,-bb.c.y,-bb.c.z)</code>
 	 */
@@ -1278,11 +1344,14 @@ public class UGeometry implements UConstants {
   public static UGeometry readSTL(PApplet p,String path) {
   	byte [] header,byte4;
   	ByteBuffer buf;
-  	int num,perc,lastperc=-1,step,stepMult;
+  	int num=0,step,stepMult;
   	float vv[]=new float[12];
     File file=null;
     String filename;
     UGeometry geo=null;
+    
+    UProgressInfo progress=new UProgressInfo();
+    float lastPerc=-5;
 
 		header=new byte[80];
 		byte4=new byte[4];
@@ -1301,28 +1370,73 @@ public class UGeometry implements UConstants {
     	System.out.println("\n\nReading "+file.getName());
 			
 			in.read(header);
-			in.read(byte4);
-  		buf = ByteBuffer.wrap(byte4);
-  		buf.order(ByteOrder.nativeOrder());
-  		num=buf.getInt();
 			
-			System.out.println("Polygons to read: "+num);
+  		// test if ASCII STL
+  		String asciiTest="";
+  		for(int i=0; i<5; i++) asciiTest+=(char)header[i];
+  		
+  		if(asciiTest.compareTo("solid")==0) { // IS ASCII STL
+  			String dat;
+  			
+  			in.close();
+      	geo=new UGeometry();
+  			
+  			BufferedReader read = new BufferedReader(new FileReader(path));  			
+  			dat=read.readLine();
+  			UUtil.log(dat);
+  			
+  			UVec3 v[]=UVec3.getVec3(3);
+  			String tok[],FACET="facet";
+  			
+  			while(dat!=null) {
+  				dat=read.readLine(); // should be "facet"
+  				if(dat==null || dat.indexOf(FACET)==-1) { // error or "endsolid"
+  	  			UUtil.log(dat);
+  					dat=null;
+  					read.close();
+  				}
+  				else {
+    				dat=read.readLine(); // "outer loop"
+    				
+    				for(int i=0; i<3; i++) {
+  	  				dat=read.readLine().trim();  // "vertex x y z"
+//    	  			UUtil.log(dat);
+  	  				tok=dat.split(" ");
+  	  				v[i].set(
+  	  						UUtil.parseFloat(tok[1]),
+  	  						UUtil.parseFloat(tok[2]),
+  	  						UUtil.parseFloat(tok[3]));
+    				}
+    				
+    				geo.addFace(v);
+    				if(geo.faceNum%1000==0) UUtil.log(geo.faceNum+" faces read.");
+    				
+    				dat=read.readLine(); // "end loop"
+    				dat=read.readLine(); // "end facet"
+  				}  				
+  			}
+  		}
+  		else { // BINARY STL
+  			in.read(byte4);
+    		buf = ByteBuffer.wrap(byte4);
+    		buf.order(ByteOrder.nativeOrder());
+    		num=buf.getInt();
+    		
+    		UUtil.log("Polygons to read: "+num);
 
-    	header=new byte[50];    	
+      	header=new byte[50];    	
+      	
+      	geo=new UGeometry();
 
-    	
-    	geo=new UGeometry();
-    	if(num>1000000) {step=1; stepMult=100;}
-    	else {step=20; stepMult=5;}
-    	step=20; stepMult=5;
-  		int id=0;
-			for(int i=0; i<num; i++) try {
-				in.read(header);
-				buf = ByteBuffer.wrap(header);
-	  		buf.order(ByteOrder.nativeOrder());
-	  		buf.rewind();
-	  		
-	  		for(int j=0; j<12; j++) vv[j]=buf.getFloat();
+      	progress.start();
+    		int id=0;
+  			for(int i=0; i<num; i++) {
+  				in.read(header);
+  				buf = ByteBuffer.wrap(header);
+  	  		buf.order(ByteOrder.nativeOrder());
+  	  		buf.rewind();
+  	  		
+  	  		for(int j=0; j<12; j++) vv[j]=buf.getFloat();
 		  		id=3;
 		  		geo.addFace(
 	  				new UVec3[] {
@@ -1331,19 +1445,18 @@ public class UGeometry implements UConstants {
 		  				new UVec3(vv[id++],vv[id++],vv[id++])
 	  				});
 	  		
-				if(i%1000==0) System.out.println(i+" triangles read.");//f[i]);
-	  		perc=(int)(stepMult*(float)i/(float)(num-1));
-	  		if(perc!=lastperc) {
-	  			lastperc=perc;
-	  			System.out.println(UUtil.nf(lastperc*step,2)+"% | "+(i+1)+" triangles read.");//f[i]);
-	  		}
-			} catch(Exception e) {
-				p.println("UGeometry.readSTL() "+e.getMessage());
-				e.printStackTrace();
-			}
-			
+		  		progress.update(p, 100f*(float)i/(float)(num-1));
+		  		if(progress.perc-lastPerc>5 || progress.perc>99.9f) {
+  	  			lastPerc=progress.perc;
+  	  			UUtil.log(geo.faceNum+" faces read, "+progress.lastUpdate);
+		  		}
+  			}
+  		} // END READ BINARY
 
-			System.out.println("Faces: "+geo.faceNum+" ("+num+" reported in file)");
+  		if(num>0)
+  			UUtil.log("Faces read: "+geo.faceNum+" ("+num+" reported in file)");
+  		else 
+  			UUtil.log("Faces read: "+geo.faceNum);
 
     } catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -1450,6 +1563,11 @@ public class UGeometry implements UConstants {
 		return (UFace [])UUtil.resizeArray(f, fn);
 	}
 	
+	public String toString() {
+		String s="UGeometry: f="+faceNum+" q="+quadNum+" v="+vert.n;
+		if(bb!=null) s+=" "+bb.toString();
+		return s;
+	}
 
 
 }

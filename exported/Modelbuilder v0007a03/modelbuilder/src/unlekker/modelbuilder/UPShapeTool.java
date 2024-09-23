@@ -13,7 +13,7 @@ public class UPShapeTool implements UConstants {
 	public float w,d,h;
 	
 	private static int undefCnt=0;
-	private int debugLevel=30;
+	private int debugLevel=0;
 	
 	public UPShapeTool(PShape _sh) {
 		sh=_sh;

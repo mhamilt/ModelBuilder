@@ -4,6 +4,12 @@ import processing.core.PApplet;
 import unlekker.util.UConstants;
 import unlekker.util.UUtil;
 
+/**
+ * CURRENTLY BROKEN. Intended to provide a way to access individual triangle/quaf strips in
+ * a UGeometry object.
+ * @author Marius Watz
+ *
+ */
 public class UStrip implements UConstants  {
 	public UGeometry parent;
 	public int type,quadNum,triNum;

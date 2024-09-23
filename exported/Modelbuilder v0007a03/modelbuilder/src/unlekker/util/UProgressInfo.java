@@ -20,6 +20,8 @@ public class UProgressInfo {
 	public long start,estimated,elapsed;
 	public float perc;
 	
+	public String lastUpdate;
+	
 	public UProgressInfo() {
 		start();
 	}
@@ -40,6 +42,7 @@ public class UProgressInfo {
 	 */
 	public String update(PApplet _p,float _perc) {
 		perc=_perc;
+		
 		float t=perc/100f;
 		elapsed=System.currentTimeMillis()-start;
 		
@@ -50,12 +53,12 @@ public class UProgressInfo {
 			estimated=(long)timeEst;
 		}
 		
-		String s=UUtil.nf(perc,1,2)+"%";
-		if(_p!=null) s+="	FPS: "+UUtil.nf(_p.frameRate,1,2);
-		s=s+" Elapsed: "+UUtil.timeStr(elapsed);
-		s=s+" Remain: "+UUtil.timeStr(estimated);
+		lastUpdate=UUtil.nf(perc,1,2)+"%";
+		if(_p!=null) lastUpdate+="	FPS: "+UUtil.nf(_p.frameRate,1,2);
+		lastUpdate=lastUpdate+" Elapsed: "+UUtil.timeStr(elapsed);
+		lastUpdate=lastUpdate+" Remain: "+UUtil.timeStr(estimated);
 
-		return s;
+		return lastUpdate;
 	}
 	
 }

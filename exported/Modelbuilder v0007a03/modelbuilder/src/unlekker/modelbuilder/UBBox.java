@@ -36,7 +36,7 @@ public class UBBox {
 
 	public void calc(UVertexList vl, boolean doReset) {
 		if(doReset) reset();
-		for(int i=0; i<vl.n; i++) addPoint(vl.v[i]);
+		for(int i=0; i<vl.n; i++) if(vl.v[i]!=null) addPoint(vl.v[i]);
 		finishCalc();
 	}
 

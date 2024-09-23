@@ -1,10 +1,12 @@
 package unlekker.util;
 
 import java.awt.Color;
+import java.awt.image.VolatileImage;
 import java.util.ArrayList;
 
 import processing.core.PApplet;
 import processing.core.PImage;
+import unlekker.modelbuilder.UVec3;
 
 public class UColorTool {
 	public int n=-1,colors[];
@@ -364,6 +366,10 @@ public class UColorTool {
 		return (alpha<<24) | Integer.parseInt(hex, 16);
 	}
 
+	public static final int toColor(UVec3 colVec) {
+		return toColor(colVec.x,colVec.y,colVec.z);
+	}
+
 	public static final String colToString(int col) {
 		return ("rgba=("+((col>>16)&0xff)+","+((col>>8)&0xff)+","+(col&0xff)+","
 				+((col>>24)&0xff)+")");
@@ -389,6 +395,10 @@ public class UColorTool {
 		
 //		UUtil.log(UColorTool.colToString(col)+" HSB "+Str.toString(hsb));
 		return hsb;
+	}
+	
+	public static final UVec3 toUVec3(int col) {
+		return new UVec3(red(col),green(col),blue(col));
 	}
 
 	public static final int adjustBrightness(int c,float mod) {

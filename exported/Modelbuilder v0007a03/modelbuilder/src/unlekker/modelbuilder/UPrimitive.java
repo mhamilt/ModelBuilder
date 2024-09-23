@@ -12,6 +12,8 @@ public class UPrimitive implements PConstants {
 	public static UGeometry cylinderGrid(float w,float h,int u,int v, boolean capped) {
 		UGeometry geo=new UGeometry();
 		UVertexList vl[]=UVertexList.getVertexLists(u);
+		
+		h*=0.5f;
 		float degD=TWO_PI/(float)(u);
 		float hD=h*2/(float)(v-1);
 		
@@ -32,6 +34,45 @@ public class UPrimitive implements PConstants {
 		return geo;
 	}
 	
+	public static UGeometry boxGrid(float w,float h,float d,int nw,int nh,int nd,boolean capped) {
+		UGeometry geo=new UGeometry();
+		geo.noDuplicates();
+		
+		float wd=w/(float)(nw-1),hd=h/(float)(nh-1),dd=d/(float)(nd-1);
+		UVertexList vl[]=new UVertexList[nd+nw+nd+nw-3];
+		UVertexList ol=new UVertexList();
+		for(int i=0; i<nh; i++) ol.add(0,(float)i*hd,0);
+		int index=0;
+		for(int i=0; i<nw; i++) 
+			vl[index++]=new UVertexList(ol).translate((float)i*wd,0,0);
+		for(int i=1; i<nd; i++) 
+			vl[index++]=new UVertexList(ol).translate(w,0,(float)i*dd);
+		for(int i=1; i<nw; i++) 
+			vl[index++]=new UVertexList(ol).translate(w-(float)i*wd,0,d);
+		for(int i=1; i<nd; i++) 
+			vl[index++]=new UVertexList(ol).translate(0,0,d-(float)i*dd);
+		UUtil.log(UUtil.toString(vl));
+		geo.quadStrip(vl);
+		geo.quadStrip(vl[vl.length-1],vl[0]);
+		
+		if(capped) {
+			ol=new UVertexList();
+			for(int i=0; i<nw; i++) ol.add(vl[i].v[0]);
+			vl=new UVertexList[nd];
+			for(int i=nd-1; i>-1; i--) vl[i]=
+					new UVertexList(ol).translate(0,0,(float)i*dd);
+			geo.quadStrip(vl);
+//			for(int i=0; i<nd; i++) vl[i]=
+			for(int i=nd-1; i>-1; i--) vl[i]=
+					new UVertexList(ol).translate(0,h,(float)i*dd);
+			geo.quadStrip(vl);
+		}
+		
+		geo.center();
+//		UUtil.log(geo.toString());
+		return geo;
+	}
+	
 	public static UGeometry box2Points(UVec3 p1, UVec3 p2, float rad) {
 	  UVec3 dir=new UVec3(p2).sub(p1);
 	  float l=dir.length();
@@ -43,12 +84,9 @@ public class UPrimitive implements PConstants {
 	  // and then Y (head.y)
 	  ln.rotateZ(head.x).rotateY(head.y).translate(p1);
 
-	  // add a chunky box that's also been aligned
-//	  ln.add(UPrimitive.box(rad*0.25f, rad*1.25f, rad*1.25f).
-//	    rotateZ(head.x).rotateY(head.y).translate(p2));
-
 	  return ln;
 	}
+
 
 	
 	public static UGeometry circleGrid(float w,int u,int v, boolean reversed) {
@@ -90,7 +128,7 @@ public class UPrimitive implements PConstants {
 		for(float i=1; i<detail; i++) {
 			vl[0].add(new UVec3(vl[0].v[0]).rotateY(D*i));
 		}
-		vl[0].add(vl[0].v[0]);
+		vl[0].close();
 		
 		vl[1]=new UVertexList(vl[0]).translate(0,-1,0);
 		vl[0].translate(0,1,0);
@@ -139,14 +177,17 @@ public class UPrimitive implements PConstants {
 		float D=(TWO_PI)/(float)(detail);
 
 		UVertexList [] vl=UVertexList.getVertexLists(2);
-		vl[0].add(new UVec3(1,0,0));
-		for(float i=1; i<detail; i++) {
-			vl[0].add(new UVec3(vl[0].v[0]).rotateY(D*i));
-		}
-		vl[0].add(vl[0].v[0]);
+		vl[0].addEllipseXZ(r1, detail).translate(0,-h*0.5f,0);
+		vl[1].addEllipseXZ(r2, detail).translate(0,h*0.5f,0);
 		
-		vl[1]=new UVertexList(vl[0]).translate(0,-1,0).scale(r2,h,r2);
-		vl[0].translate(0,1,0).scale(r1,h,r1);
+//		vl[0].add(new UVec3(1,0,0));
+//		for(float i=1; i<detail; i++) {
+//			vl[0].add(new UVec3(vl[0].v[0]).rotateY(D*i));
+//		}
+//		vl[0].add(vl[0].v[0]);
+//		
+//		vl[1]=new UVertexList(vl[0]).translate(0,-1,0).scale(r2,h,r2);
+//		vl[0].translate(0,1,0).scale(r1,h,r1);
 
 		UGeometry g=new UGeometry().quadStrip(vl[0],vl[1]);		
 
@@ -163,6 +204,10 @@ public class UPrimitive implements PConstants {
 		
 		g.beginShape(QUAD_STRIP);
 
+//		xdim/=2;
+//		ydim/=2;
+//		zdim/=2;
+		
 		g.vertex(-xdim,ydim,-zdim);
 		g.vertex(xdim,ydim,-zdim);
 		
@@ -196,6 +241,16 @@ public class UPrimitive implements PConstants {
 		
 		return g;
 	}
+
+	public static UGeometry box(float x1,float y1,float z1, 
+			float x2,float y2,float z2) {
+		float w=x2-x1,h=y2-y1,d=z2-z1;
+		
+		UGeometry b=box(w,h,d).translate(w/2+x1,h/2+y1,d/2+z1);
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
   /**
    * Code from PGraphics.java

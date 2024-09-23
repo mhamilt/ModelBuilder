@@ -6,6 +6,7 @@ import java.io.*;
 
 import java.lang.*;
 import java.lang.reflect.*;
+import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -28,6 +29,8 @@ import java.util.*;
 public class UUtil implements UConstants {
 	private static Runtime runtime;
 	private final static String NULLSTR="NULL",EQUALSTR=" = ",COMMASTR=", ";
+	private final static String STRSQBRACKETSTART="[",STRSQBRACKETEND="]",
+			STRCURLYSTART="{",STRCURLYEND="}",STRGT=">",STRLT="<";
 	private final static Class [] types={
 		Float.class, Integer.class, Double.class, 
 		Long.class, String.class, Boolean.class};
@@ -208,7 +211,7 @@ public class UUtil implements UConstants {
 
   public static void log(Object [] o) {
   	if(o==null) logPrint("log: String array == null.");
-  	for(int i=0; i<o.length; i++) logPrint(i+"/"+o.length+":"+o[i].toString());
+  	for(int i=0; i<o.length; i++) logPrint(i+"/"+o.length+":"+o[i]);
   }
 
   public static void log(float [] f) {
@@ -220,6 +223,12 @@ public class UUtil implements UConstants {
   	if(val==null) logPrint("log: Int array == null.");
   	for(int i=0; i<val.length; i++) logPrint(i+": "+val[i]);
   }
+  
+	public static void log(long[] val) {
+  	if(val==null) logPrint("log: Long array == null.");
+  	for(int i=0; i<val.length; i++) logPrint(i+": "+val[i]);
+	}
+
   
 //  public static void log(String [] s,int min,int max) {
 //  	if(s==null) logPrint("log: String array == null.");
@@ -280,11 +289,18 @@ public class UUtil implements UConstants {
   }
   
   // LOG TO FILE
-  
+
   public static void logToFile(String filename) {
+  	logToFile(filename,false);
+  }
+
+  public static void logToFile(String filename,boolean append) {
   	if(logger==null) try {
   		Calendar cal=Calendar.getInstance();
   		
+    	
+			logDivider("Added log file output: '"+logFilename+"'");
+			
     	logFilename=filename;   	
 //    	java.util.logging.ConsoleHandler.level=NONE;
     	logger=Logger.getLogger("Util");
@@ -296,7 +312,7 @@ public class UUtil implements UConstants {
 
     	// Erase log once a week
     	File f=new File(logFilename);
-    	if(f.exists()) {
+    	if(append && f.exists()) {
     		Calendar mod=Calendar.getInstance();
     		mod.setTimeInMillis(f.lastModified());
     		log("Modified: "+timeStr(mod));
@@ -309,12 +325,11 @@ public class UUtil implements UConstants {
     			logHandler=new FileHandler(logFilename);
     		}
     	}
-    	if(logHandler==null) logHandler=new FileHandler(logFilename,true);
+    	
+    	if(logHandler==null) logHandler=new FileHandler(logFilename,append);
     	
     	logger.addHandler(logHandler);
     	logHandler.setFormatter(logUtil);
-    	
-			logDivider("Added log file output: '"+logFilename+"'");
 //    	log("Log started: "+timeStr(cal));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -970,10 +985,59 @@ public class UUtil implements UConstants {
 		for(int i=0; i<n; i++) ss[i]=""+s[i];
 		return ss;
 	}
-	
+
+	/**
+	 * Removes '[' and ']' from beginning and end of a String,
+	 * but only if both are present. 
+	 * @param s
+	 * @return
+	 */
 	public static String chopBraces(String s) {
-		if(s==null || (s.indexOf('[')<0 && s.indexOf('{')<0)) return s;
-		return s.substring(1,s.length()-1);		
+		if(s.startsWith(STRSQBRACKETSTART) && s.endsWith(STRSQBRACKETEND))
+			return s.substring(1,s.length()-1);
+//		boolean changed;
+//		do {
+//			changed=true;
+//			if(s.startsWith(STRSQBRACKETSTART)) s=s.substring(1);
+//			else if(s.startsWith(STRCURLYSTART)) s=s.substring(1);
+//			else if(s.startsWith(STRLT)) s=s.substring(1);
+//			else if(s.endsWith(STRSQBRACKETEND)) s=s.substring(0,s.length()-1);
+//			else if(s.endsWith(STRCURLYEND)) s=s.substring(0,s.length()-1);
+//			else if(s.endsWith(STRGT)) s=s.substring(0,s.length()-1);
+//			else changed=false;
+//		} while(changed);
+		
+		return s;
+//		
+//		if(s==null || (s.indexOf('[')<0 && s.indexOf('{')<0)) return s;
+//		return s.substring(1,s.length()-1);		
+	}
+
+	/**
+	 * Will remove all occurrences of the characters '&lt;', '&gt;', '[', ']', '{' and '}'
+	 * from the input string and return the result. Beware: While <code>chopBraces()</code>
+	 * only removes those characters from the beginning and end of a string, <code>stripBraces()</code>
+	 * will remove characters from all positions in the string.
+	 * @param s
+	 * @return
+	 */
+	public static String stripBraces(String s) {
+		char c[]=s.toCharArray();
+		char tmp[]=new char[c.length];
+		
+		int id=0;
+		for(int i=0; i<c.length; i++) {
+			char cc=c[i];
+			if(cc!='<' && cc!='>' && cc!='[' && cc!=']' &&
+					cc!='{' && cc!='}') tmp[id++]=c[i];
+		}
+		
+		char res[]=new char[id];
+		System.arraycopy(tmp, 0, res, 0, id);
+		return new String(res);
+//		
+//		if(s==null || (s.indexOf('[')<0 && s.indexOf('{')<0)) return s;
+//		return s.substring(1,s.length()-1);		
 	}
 	
 	public static String toString(float[] f) {
@@ -1238,6 +1302,12 @@ public class UUtil implements UConstants {
 		return formatInt.format(num);
 	}
 
+	static public String nf(int num) {
+		if (formatInt==null) nfInitFormats();
+		formatInt.setMinimumIntegerDigits(3);
+		return formatInt.format(num);
+	}
+
 	static public String strRepeat(String s, int n) {
 		String out="";
 		for(int i=0; i<n; i++) out+=s;
@@ -1264,6 +1334,17 @@ public class UUtil implements UConstants {
 		}
 
 		return s;
+	}
+
+	public static SimpleDateFormat dateStrFormat;
+
+	public static String dateStr() {
+		return dateStr(Calendar.getInstance());
+	}
+
+	public static String dateStr(Calendar c) {
+		if(dateStrFormat==null) dateStrFormat=new SimpleDateFormat("yyyyMMdd");
+		return dateStrFormat.format(c.getTime());
 	}
 
 	public static String timeStr(long t) {
@@ -1347,6 +1428,11 @@ public class UUtil implements UConstants {
 			val[i]=Integer.parseInt(s[i+offs]);
 		return val;
 	}
+	
+	public static long parseLong(String string) {
+		return Long.parseLong(string);
+	}
+
 
 	public static String repeatChar(char ch, int num) {
 		char c[]=new char[num];

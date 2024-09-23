@@ -374,5 +374,14 @@ public class UFace implements UConstants, Comparable<UFace> {
 		
 		return -1; // no match
 	}
+	
+	public float surfaceArea() {
+		float a=v[0].distanceTo(v[1]);
+		float b=v[1].distanceTo(v[2]);
+		float c=v[2].distanceTo(v[0]);
+		float s=(a+b+c)/2;
+		float area=(float)Math.sqrt(s*(s-a)*(s-b)*(s-c));
+    return area;
+}
 
 }

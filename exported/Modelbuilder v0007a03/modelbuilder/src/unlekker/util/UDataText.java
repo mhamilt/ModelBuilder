@@ -77,6 +77,7 @@ public class UDataText {
 			tokens=new String[] {parseStr};
 			numToken=1;
 			currToken=0;
+			return TOKENSTR;
 		}
 
 		return -1;
@@ -101,6 +102,11 @@ public class UDataText {
 		return UUtil.parseInt(tokens[currToken++]);
 	}
 
+	public long getLong() {
+		return UUtil.parseLong(tokens[currToken++]);
+	}
+
+	
 	public boolean getBool() {
 		String bool=tokens[currToken++];
 		if(bool.equals("true")) return true;
@@ -352,8 +358,5 @@ public class UDataText {
 		String str[]=PApplet.split(arr, delim);
 	  return str;
   }
-
-	
-	
 
 }

@@ -1,6 +1,12 @@
-import controlP5.*;
+/**
+ * particle_tree_01.pde - Marius Watz, 2012
+ * http://workshop.evolutionzone.com
+ * 
+ * Grows a tree-like structure using branching particles.
+ */
+ 
+ import controlP5.*;
 
-import unlekker.test.*;
 import unlekker.util.*;
 import unlekker.modelbuilder.*;
 import ec.util.*;

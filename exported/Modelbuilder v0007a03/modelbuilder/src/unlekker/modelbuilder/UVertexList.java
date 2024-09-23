@@ -177,13 +177,7 @@ public class UVertexList implements UConstants {
 	 * @param p
 	 */
 	public void draw(PApplet p) {
-		int id=0;
-
-		p.beginShape();		
-		for(int i=0; i<n; i++) {						
-			p.vertex(v[id].x,v[id].y,v[id++].z);
-		}
-		p.endShape();		
+		draw(p.g);
 	}
 
 	/**
@@ -193,6 +187,16 @@ public class UVertexList implements UConstants {
 	public void draw(PGraphics p) {
 		int id=0;
 
+		if(p.getClass().getSimpleName().equals("PGraphicsJava2D")) {
+			p.beginShape();		
+			for(int i=0; i<n; i++) {						
+				p.vertex(v[id].x,v[id++].y);
+			}
+			p.endShape();		
+			
+			return;
+		}
+		
 		p.beginShape();		
 		for(int i=0; i<n; i++) {						
 			p.vertex(v[id].x,v[id].y,v[id++].z);
@@ -372,16 +376,37 @@ public class UVertexList implements UConstants {
 		return add(_v);
 	}
 
-	public UVertexList addAtStart(UVec3 _v) {
+	public UVertexList addAt(int id,float x,float y,float z) {
 		if(n==v.length) {
 			v=(UVec3[])UUtil.expandArray(v);
 			if(doColor) vertexCol=UUtil.expandArray(vertexCol, v.length);
 		}
 		
-		System.arraycopy(v, 0, v, 1, n);
-		v[0]=new UVec3(_v);
-		n++;
+		System.arraycopy(v, id, v, id+1, n-id);
+		v[id]=new UVec3(x,y,z);				
+		
 		return this;
+	}
+
+	public UVertexList addAt(int id,UVec3 vv) {
+		return addAt(id,vv.x,vv.y,vv.z);
+	}
+	
+	public UVertexList addAtStart(float x,float y,float z) {
+		return addAt(0,x,y,z);
+	}
+	
+	public UVertexList addAtStart(UVec3 _v) {
+		return addAt(0,_v);
+//		if(n==v.length) {
+//			v=(UVec3[])UUtil.expandArray(v);
+//			if(doColor) vertexCol=UUtil.expandArray(vertexCol, v.length);
+//		}
+//		
+//		System.arraycopy(v, 0, v, 1, n);
+//		v[0]=new UVec3(_v);
+//		n++;
+//		return this;
 	}
 	
 	/**
@@ -498,6 +523,23 @@ public class UVertexList implements UConstants {
 		return this;
 	}
 
+	public UVertexList addMidPoints() {
+		UVertexList nv=new UVertexList();
+		
+		for(int i=0; i<n-1; i++) {
+			nv.add(v[i]);
+			if(v[i].distanceTo(v[i+1])>0.0001f) 
+				nv.add(UVec3.interpolate(v[i], v[i+1], 0.5f));
+		}
+		nv.add(last());
+		
+		bb=null;
+		n=nv.n;
+		v=nv.v;
+		
+		return this;
+	}
+	
 /**
  * 	 Convenience method to add X,Y vertices	
  * @param x
@@ -594,6 +636,14 @@ public class UVertexList implements UConstants {
 		return this;
 	}
 
+	public UVertexList addEllipseXZ(float rad,int detail) {
+		for(int i=0; i<detail; i++) add(
+				new UVec3(rad,0,0).
+				rotateY(PApplet.map(i,0,detail,0,TWO_PI)));
+		close();
+		return this;
+	}
+	
 	public UVertexList addArcXZ(float x,float y,float z, float rad,float start,float end,int numSteps) {
 		UVec3 cp=new UVec3(x,y,z),pos=new UVec3(rad,0,0);
 		

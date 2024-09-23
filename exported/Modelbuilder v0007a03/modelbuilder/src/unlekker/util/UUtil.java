@@ -221,6 +221,12 @@ public class UUtil implements UConstants {
   	for(int i=0; i<val.length; i++) logPrint(i+": "+val[i]);
   }
   
+	public static void log(long[] val) {
+  	if(val==null) logPrint("log: Long array == null.");
+  	for(int i=0; i<val.length; i++) logPrint(i+": "+val[i]);
+	}
+
+  
 //  public static void log(String [] s,int min,int max) {
 //  	if(s==null) logPrint("log: String array == null.");
 //  	min=Data.max(0,min);
@@ -280,8 +286,12 @@ public class UUtil implements UConstants {
   }
   
   // LOG TO FILE
-  
+
   public static void logToFile(String filename) {
+  	logToFile(filename,false);
+  }
+
+  public static void logToFile(String filename,boolean append) {
   	if(logger==null) try {
   		Calendar cal=Calendar.getInstance();
   		
@@ -296,7 +306,7 @@ public class UUtil implements UConstants {
 
     	// Erase log once a week
     	File f=new File(logFilename);
-    	if(f.exists()) {
+    	if(append && f.exists()) {
     		Calendar mod=Calendar.getInstance();
     		mod.setTimeInMillis(f.lastModified());
     		log("Modified: "+timeStr(mod));
@@ -309,7 +319,8 @@ public class UUtil implements UConstants {
     			logHandler=new FileHandler(logFilename);
     		}
     	}
-    	if(logHandler==null) logHandler=new FileHandler(logFilename,true);
+    	
+    	if(logHandler==null) logHandler=new FileHandler(logFilename,append);
     	
     	logger.addHandler(logHandler);
     	logHandler.setFormatter(logUtil);
@@ -1266,6 +1277,17 @@ public class UUtil implements UConstants {
 		return s;
 	}
 
+	public static SimpleDateFormat dateStrFormat;
+
+	public static String dateStr() {
+		return dateStr(Calendar.getInstance());
+	}
+
+	public static String dateStr(Calendar c) {
+		if(dateStrFormat==null) dateStrFormat=new SimpleDateFormat("yyyyMMdd");
+		return dateStrFormat.format(c.getTime());
+	}
+
 	public static String timeStr(long t) {
 		int tmp;
 		if (buf==null) buf=new StringBuffer();
@@ -1347,6 +1369,11 @@ public class UUtil implements UConstants {
 			val[i]=Integer.parseInt(s[i+offs]);
 		return val;
 	}
+	
+	public static long parseLong(String string) {
+		return Long.parseLong(string);
+	}
+
 
 	public static String repeatChar(char ch, int num) {
 		char c[]=new char[num];
