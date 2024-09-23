@@ -1,6 +1,6 @@
 .zip
 .rar
-
+.class
 .DS_Store
 applet
 application.linux-arm64
