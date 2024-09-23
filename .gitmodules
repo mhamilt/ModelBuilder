@@ -1,0 +1,9 @@
+[submodule "processing-core-4"]
+	path = processing-core-4
+	url = https://github.com/micycle1/processing-core-4
+[submodule "ComputationalGeometry-P5"]
+	path = ComputationalGeometry-P5
+	url = https://github.com/cloudlab/ComputationalGeometry-P5
+[submodule "geomerative"]
+	path = geomerative
+	url = https://github.com/rikrd/geomerative.git

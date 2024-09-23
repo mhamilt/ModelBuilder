@@ -1,0 +1,14 @@
+-Xlint:none
+-cp /Applications/Processing.app/Contents/Java/core.jar
+-cp /Users/admin/Documents/GitHub/ModelBuilder-assemble/geomerative/src/temp/geomerative.jar
+-cp /Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1.jar
+-cp /Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1.jar
+-cp /Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-tools.jar
+-cp /Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-tests.jar
+-cp /Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-test-sources.jar
+-cp /Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-sources.jar
+-cp /Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-javadoc.jar
+-cp /Users/admin/Documents/GitHub/ModelBuilder-assemble/libAHOData/poly2tri.jar
+-cp /Users/admin/Documents/GitHub/ModelBuilder-assemble/libAHOData/apacheCommonsMathRotations.jar
+-cp /Users/admin/Documents/GitHub/ModelBuilder-assemble/libAHOData/modelbuilderMk2.jar
+-d ./temp/ 

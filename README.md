@@ -1,4 +1,39 @@
-## ModelbuilderMk2
+# Model Bulider
+
+Original Model Builder Library with some additions to allow for easy version control.
+
+
+## Building
+
+Until a stable release is made, building the library will be necessary.
+
+Currently the process is, from project route:
+
+```
+/Applications/Processing.app/Contents/PlugIns/jdk-17.0.8+7/Contents/Home/bin/javac -Xlint -cp "processing-core-4-4.3.3.jar" -d ./temp/ ./src/external/ComputationalGeometry/IsoContour.java
+
+/Applications/Processing.app/Contents/PlugIns/jdk-17.0.8+7/Contents/Home/bin/javac -Xlint -cp "/Applications/Processing.app/Contents/Java/core.jar" -d ./temp/ ./src/external/ComputationalGeometry/IsoContour.java
+
+/Applications/Processing.app/Contents/PlugIns/jdk-17.0.8+7/Contents/Home/bin/javac -Xlint -cp "/Applications/Processing.app/Contents/Java/core.jar" -d ./temp/ ./src/external/quickhull3d/*.java
+
+```
+
+
+First successful compilation
+
+```sh
+/Applications/Processing.app/Contents/PlugIns/jdk-17.0.8+7/Contents/Home/bin/javac -Xlint:none -cp "/Applications/Processing.app/Contents/Java/core.jar:/Users/admin/Documents/GitHub/ModelBuilder-assemble/geomerative/src/temp/geomerative.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-tools.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-tests.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-test-sources.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-sources.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-javadoc.jar:/Users/admin/Documents/GitHub/ModelBuilder-assemble/libAHOData/poly2tri.jar:/Users/admin/Documents/GitHub/ModelBuilder-assemble/libAHOData/apacheCommonsMathRotations.jar:/Users/admin/Documents/GitHub/ModelBuilder-assemble/libAHOData/modelbuilderMk2.jar" -d ./temp/ **/*.java
+
+```
+
+
+```
+/Applications/Processing.app/Contents/PlugIns/jdk-17.0.8+7/Contents/Home/bin/javac -Xlint:none \ 
+-cp "/Applications/Processing.app/Contents/Java/core.jar:/Users/admin/Documents/GitHub/ModelBuilder-assemble/geomerative/src/temp/geomerative.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-tools.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-tests.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-test-sources.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-sources.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-javadoc.jar:/Users/admin/Documents/GitHub/ModelBuilder-assemble/libAHOData/poly2tri.jar:/Users/admin/Documents/GitHub/ModelBuilder-assemble/libAHOData/apacheCommonsMathRotations.jar:/Users/admin/Documents/GitHub/ModelBuilder-assemble/libAHOData/modelbuilderMk2.jar" -d ./temp/ **/*.java
+```
+
+## Old ModelbuilderMk2 Notes
+
 ModelbuilderMk2 (previously Modelbuilder) is a computational geometry library for Processing. Its focus is to facilitate parametric and generative modeling of geometry, while minimizng complex math and repetitive code where possible. The library is based on a set of simplified data structures with corresponding workflows:
 
 UVertexList represents paths and edges, comprised of UVertex objects. UGeo stores mesh data and automates common mesh-generating operations (quad strips, triangle fans), providing tools to manipulate meshes as unified entities. Additional tools include mesh selection and traversal, export to STL and various time-saving hacks.
