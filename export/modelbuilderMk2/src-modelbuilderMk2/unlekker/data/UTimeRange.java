@@ -16,38 +16,15 @@ public class UTimeRange extends UMB {
     end=new UTime().set(0);    
   }
 
-  public UTime getStart() {
-    return start;
-  }
 
-  public UTime getEnd() {
-    return end;
-  }
-
-  /**
-   * Used to iteratively establish a time range from
-   * a series of timestamps, with start/end times 
-   * adjusted accordingly when a new low / high timestamp
-   * is added.
-   * @param t
-   * @return
-   */
-  public UTimeRange addToRange(long t) {
+  public UTimeRange add(long t) {
     if(start.get()==0 || start.get()>t) start.set(t);
     if(end.get()<t) end.set(t);
     return this;
   }
 
-  /**
-   * Used to iteratively establish a time range from
-   * a series of timestamps, with start/end times 
-   * adjusted accordingly when a new low / high timestamp
-   * is added.
-   * @param t
-   * @return
-   */
-  public UTimeRange addToRange(UTime t) {
-    return addToRange(t.get());
+  public UTimeRange add(UTime t) {
+    return add(t.get());
   }
   
   
@@ -74,7 +51,7 @@ public class UTimeRange extends UMB {
       cnt++;
       s+=tmp.strDate()+" ";
     }
-//    log(s);
+    log(s);
     
     return cnt;
   }
@@ -84,11 +61,6 @@ public class UTimeRange extends UMB {
         UTime.datetimeF.format(new Date(start.get())),
         UTime.datetimeF.format(new Date(end.get())));
     return s;
-  }
-
-  
-  public UTimeRange set(UTime start,UTime end) {
-    return set(start.get(),end.get());
   }
 
   public UTimeRange set(long start,long end) {
@@ -106,7 +78,7 @@ public class UTimeRange extends UMB {
   }
   
   public float mapToRange(long t) {
-    double D=end.get()-start.get();
+    double D=start.get()-end.get();
     t-=start.get();
     
     return (float)(t/D);

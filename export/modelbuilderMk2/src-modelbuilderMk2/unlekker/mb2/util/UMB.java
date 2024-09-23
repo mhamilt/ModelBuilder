@@ -2,7 +2,6 @@ package unlekker.mb2.util;
 
 import java.io.File;
 import java.lang.Character.Subset;
-import java.security.MessageDigest;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -68,9 +67,9 @@ public class UMB implements UConst {
   static {
     if(!libraryPrinted) {
       UMBStartTime=System.currentTimeMillis();
-//      UMB.logDivider(VERSION);
-//      UMB.log(CREDIT);
-//      UMB.logDivider();
+      UMB.logDivider(VERSION);
+      UMB.log(CREDIT);
+      UMB.logDivider();
       
       libraryPrinted=true;
       dateStrFormat=new SimpleDateFormat("yyyy.MM.dd HH:mm:ss",Locale.US);
@@ -1799,38 +1798,6 @@ public class UMB implements UConst {
 
   public String str() {
     return this.getClass().getName();
-  }
-
-  /**
-   * Produce hexadecimal SHA1 hash of input string.
-   * @param input
-   * @return
-   */
-  public static String toSHA1(String input) {
-    MessageDigest md = null;
-    
-//    input=domain+"-"+input;
-    
-    byte[] convertme=input.getBytes();
-    
-    try {
-        md = MessageDigest.getInstance("SHA-1");
-        
-    }
-    catch(Exception e) {
-        e.printStackTrace();
-        return null;
-    } 
-    
-    String result = "";
-    byte[] b=md.digest(convertme);
-    
-    for (int i=0; i < b.length; i++) {
-      result +=
-            Integer.toString( ( b[i] & 0xff ) + 0x100, 16).substring( 1 );
-    }
-
-    return result;
   }
 
   public String toString() {

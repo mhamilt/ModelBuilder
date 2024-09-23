@@ -4,7 +4,7 @@ import java.util.*;
 
 import unlekker.mb2.util.UMB;
 
-public class UDataPoint extends UMB implements Comparable<UDataPoint> {
+public class UDataPoint extends UMB {
   private UTime time;
   private ArrayList<UDataTag> tags;
   private HashMap<String,Object> data;
@@ -55,26 +55,11 @@ public class UDataPoint extends UMB implements Comparable<UDataPoint> {
     return this;    
   }
 
-  public UDataPoint addDouble(String key,double value) {
-    data.put(key,value);    
-    return this;    
-  }
-
   public UDataPoint addInt(String key,int value) {
     data.put(key,value);    
     return this;
   }
 
-  public UDataPoint addLong(String key,long value) {
-    data.put(key,value);    
-    return this;
-  }
-
-  public UDataPoint addBoolean(String key,boolean value) {
-    data.put(key,value);    
-    return this;    
-  }
-  
   public UDataPoint addString(String key,String value) {
     data.put(key,value);    
     return this;
@@ -89,20 +74,8 @@ public class UDataPoint extends UMB implements Comparable<UDataPoint> {
     return (Float)data.get(key);
   }
 
-  public double getDouble(String key) {
-    return (Double)data.get(key);
-  }
-
-  public long getLong(String key) {        
-    return (Long)data.get(key);
-  }
-  
   public int getInt(String key) {        
     return (Integer)data.get(key);
-  }
-
-  public boolean getBoolean(String key) {        
-    return (Boolean)data.get(key);
   }
 
   public String getString(String key) {
@@ -117,27 +90,15 @@ public class UDataPoint extends UMB implements Comparable<UDataPoint> {
     Object o=getObject(key);
     return o.getClass().getName();
   }
-
-  public String getValueType(String key) {
-    String cl=getClassName(key);
-    if(cl.contains(DATAFLOAT)) return DATAFLOAT;
-    if(cl.contains(DATAINT)) return DATAINT;
-    if(cl.contains(DATASTRING)) return DATASTRING;
-    
-    return DATAOBJ;
-  }
   
   public String getValue(String key) {
     try {
-      String type=getValueType(key);
+      String cl=getClassName(key);
+      if(cl.contains(DATAFLOAT)) return ""+getFloat(key);
+      if(cl.contains(DATAINT)) return ""+getInt(key);
+      if(cl.contains(DATASTRING)) return getString(key);
       
-      if(type==DATAFLOAT) return ""+getFloat(key);
-      if(type==DATAINT) return ""+getInt(key);
-      if(type==DATASTRING) return getString(key);
-      
-      Object o=getObject(key);
-      return strf("%s[%s]", o.toString(),o.getClass().getName());
-      
+      return strf("%s[%s]", DATAOBJ,cl);
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -146,21 +107,8 @@ public class UDataPoint extends UMB implements Comparable<UDataPoint> {
     return null;
   }
 
-  public boolean hasKey(String key) {
-    for(String tmp : keys()) if(key.compareTo(tmp)==0) return true;
-    
-    return false;
-  }
-
-  public Set<String> keys() {
-    TreeSet<String> k=new TreeSet<String>();
-    for(String key : data.keySet()) k.add(key);
-    
-    return k;//data.keySet();
-  }
-  
-  public int size() {
-    return data.size();
+  public Set<String> getKeys() {
+    return data.keySet();
   }
   
   /////////////// TIME
@@ -194,27 +142,5 @@ public class UDataPoint extends UMB implements Comparable<UDataPoint> {
   public boolean before(UTime t) {
     return (time!=null && time.before(t) ? true : false);
   }
- 
-  public String str() {
-    StringBuffer buf=strBufGet();
-    
-//    buf.append('[');
-    for(String key : keys()) {
-      buf.append('|');
-      buf.append(key).append('=').append(getValue(key));      
-    }
-    buf.append(']');
-    buf.insert(0, '['+(time==null ? "" : time.str()));
-    
-    return strBufDispose(buf);
-  }
-
-  @Override
-  public int compareTo(UDataPoint o) {
-    if(time()!=null) {
-     return (int)(time.get()-o.time.get()); 
-    }
-    
-    return -1; 
-  }
+  
 }
