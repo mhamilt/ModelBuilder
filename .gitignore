@@ -1,6 +1,9 @@
 *.zip
+*.dll
 *.rar
 *.class
+*.jar
+
 .DS_Store
 applet
 application.linux-arm64
