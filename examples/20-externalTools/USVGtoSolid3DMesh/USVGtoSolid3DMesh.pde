@@ -1,7 +1,7 @@
 import unlekker.mb2.geo.*;
 import unlekker.mb2.util.*;
 import unlekker.mb2.externals.*;
-import unlekker.mb2.data.*;
+import unlekker.data.*;
 import ec.util.*;
 
 import geomerative.*;
