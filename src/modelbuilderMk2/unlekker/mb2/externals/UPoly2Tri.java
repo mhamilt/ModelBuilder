@@ -10,6 +10,8 @@ import unlekker.mb2.util.UFile;
 import unlekker.mb2.util.UMB;
 import unlekker.mb2.util.UTask;
 
+import processing.core.*;
+
 /**
  * <p>Utility class to interface with the <a href="http://sites-final.uclouvain.be/mema/Poly2Tri/">Poly2Tri-java</a> 
  * triangulation engine by Wu Liang, producing valid UGeo meshes from simple or compound polygons.</p> 
@@ -61,7 +63,7 @@ public class UPoly2Tri extends UMB {
     UTask task=new UTask("UPoly2Tri.triangulate");
     
     poly2Tri.Triangulation.debug=true;
-    poly2Tri.Triangulation.debugFileName=UFile.getCurrentDir()+"/debug.txt";
+    poly2Tri.Triangulation.debugFileName=papplet.sketchPath()+"/data/debug.txt";
     int numVL=stack.size();
     int numV[]=new int[numVL];
     int numVTotal=0;

@@ -26,7 +26,7 @@ public class UFile implements UConst {
       e.printStackTrace();
       currDir=null;
     }
-    return currDir;
+    return UMB.getPApplet().sketchPath();
   }
 
   
