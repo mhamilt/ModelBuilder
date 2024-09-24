@@ -2,52 +2,51 @@
 //by Amanda Ghassaei
 //Dec 2012
 //https://www.instructables.com/id/3D-Printed-Record/
-
+//-----------------------------------------------------------------------------
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  */
-
+//-----------------------------------------------------------------------------
 import processing.opengl.*;
 import ec.util.*;
 import unlekker.mb2.util.*;
 import unlekker.mb2.externals.*;
 import unlekker.mb2.geo.*;
 import unlekker.data.*;
-
-
+//-----------------------------------------------------------------------------
 UVertexList recordPerimeterUpper, recordPerimeterLower, recordHoleUpper, recordHoleLower;//storage for perimeter and center hole of record
-UVertexList lastEdge;//storage for conecting one groove to the next
-UGeo geo;//storage for stl geometry
-
+UVertexList lastEdge; //storage for conecting one groove to the next
+UGeo geo;             //storage for stl geometry
+//-----------------------------------------------------------------------------
 //variables
-float theta;//angle variable
-float thetaIter = 100;//how many values of theta per cycle
-float radius;//variable to calculate radius of grooves
-int diameter = 7;//diameter of record in inches
-float innerHole = 0.286;//diameter of center hole in inches
-float innerRad = 2.35;//radius of innermost groove in inches
-float outerRad = 5.75;//radius of outermost groove in inches
-float grooveSpacing = 20;//pixel spacing of grooves
-float bevel = 2;//pixel width of groove bevel
-
+float theta;               // angle variable
+float thetaIter = 50;      // how many values of theta per cycle
+float radius;              // variable to calculate radius of grooves
+float diameter = 7;        // diameter of record in inches
+float innerHole = 0.286;   // diameter of center hole in inches
+float innerRad = 2.35;     // radius of innermost groove in inches
+float outerRad = 5.75;     // radius of outermost groove in inches
+float grooveSpacing = 20;  // pixel spacing of grooves
+float bevel = 2;           // pixel width of groove bevel
+int numberOfCopies = 2;
+//-----------------------------------------------------------------------------
 //record parameters
-float recordHeight = 0.08;//height of record in inches
-int recordBottom = 0;     //height of bottom of record
-
+float recordHeight = 0.08; // height of record in inches
+float recordBottom = 0;    // height of bottom of record
+//-----------------------------------------------------------------------------
 //parameters to test
-float amplitudes[] = {2, 4, 8};//in units of 16 micron steps (remember this is the amplitude of the sine wave, the total vert displacement will be twice this)
-float frequencies[] = {1000, 500, 0};//cycles per rotation
-float grooveDepths[] = {0.5, 1, 0};//how many 16 microns steps below the surface of the record to print the uppermost point of the groove
-float grooveWidths[] = {1, 2, 3};//in 600dpi pixels
-
-float incrNum = TWO_PI/thetaIter;//calculcate inrementation amount
-
-int grooveNum = 0;//variable for keeping track of how long this will take
-
-void setup() {//everything that executes in this sketch is contained in the setup()
+float amplitudes[] = {2, 4, 8};     //in units of 16 micron steps (remember this is the amplitude of the sine wave, the total vert displacement will be twice this)
+float frequencies[] = {1000, 500};  //cycles per rotation
+float grooveDepths[] = {0.5, 1};    //how many 16 microns steps below the surface of the record to print the uppermost point of the groove
+float grooveWidths[] = {1, 2, 3};   //in 600dpi pixels
+float incrNum = TWO_PI / thetaIter; //calculcate inrementation amount
+int grooveNum = 0;                  //variable for keeping track of how long this will take
+//-----------------------------------------------------------------------------
+void setup()
+{
   UMB.setPApplet(this);
   geo = new UGeo();//place to store geometery of verticies
 
@@ -58,24 +57,32 @@ void setup() {//everything that executes in this sketch is contained in the setu
   geo.writeSTL(sketchPath("test.stl"));
 }
 
-void setUpVariables() {
+//-----------------------------------------------------------------------------
 
+void setUpVariables()
+{
   //convert everything to inches
   float micronsPerInch = 25400;//scalingfactor
   float dpi = 600;
-  byte micronsPerLayer = 16;//microns per vertical print layer
+  float micronsPerLayer = 16;//microns per vertical print layer
 
   grooveSpacing /= dpi;
   bevel /= dpi;
-  for (byte i=0; i<3; i++) {
-    amplitudes[i] = amplitudes[i]*micronsPerLayer/micronsPerInch;
+  for (byte i = 0; i < 2; i++)
+  {
+    amplitudes[i]   = amplitudes[i]*micronsPerLayer/micronsPerInch;
     grooveDepths[i] = grooveDepths[i]*micronsPerLayer/micronsPerInch;
     grooveWidths[i] /= dpi;
   }
+  int i = 2;
+  amplitudes  [i]  = amplitudes[i] * micronsPerLayer / micronsPerInch;  
+  grooveWidths[i] /= dpi;
 }
 
-void setUpRecordShape() {
+//-----------------------------------------------------------------------------
 
+void setUpRecordShape()
+{
   //set up storage
   recordPerimeterUpper = new UVertexList();
   recordPerimeterLower = new UVertexList();
@@ -115,7 +122,10 @@ void setUpRecordShape() {
   grooveNum = 0;//variable for keeping track of how much longer this will take
 }
 
-void drawGrooves() {
+//-----------------------------------------------------------------------------
+
+void drawGrooves()
+{
 
   UVertexList grooveOuterUpper, grooveOuterLower, grooveInnerUpper, grooveInnerLower;//groove verticies
 
@@ -136,7 +146,7 @@ void drawGrooves() {
       {
         for (float grooveWidth : grooveWidths)
         {
-          for (byte copies=0; copies<2; copies++)
+          for (byte copies=0; copies < numberOfCopies; copies++)
           {
             //clear lists
             grooveOuterUpper.clear();
@@ -153,8 +163,8 @@ void drawGrooves() {
               //calculate height of groove
               float grooveHeight = recordHeight - grooveDepth - amplitude + (amplitude * sin(theta * frequency));
 
-              grooveOuterUpper.add((diameter/2 + (radius + bevel) * cosineTheta), 
-              (diameter/2+(radius+bevel)*sineTheta), recordHeight);
+              grooveOuterUpper.add((diameter/2 + (radius + bevel) * cosineTheta),
+                (diameter/2+(radius+bevel)*sineTheta), recordHeight);
               grooveOuterLower.add((diameter/2 + radius*cosineTheta), (diameter/2+radius*sineTheta), grooveHeight);
               grooveInnerLower.add((diameter/2 + (radius-grooveWidth) * cosineTheta), (diameter/2+(radius-grooveWidth)*sineTheta), grooveHeight);
               grooveInnerUpper.add((diameter/2 + (radius-grooveWidth - bevel) * cosineTheta), (diameter/2+(radius - grooveWidth - bevel)*sineTheta), recordHeight);
@@ -191,7 +201,6 @@ void drawGrooves() {
     }
     radius -= 2*grooveSpacing;//extra spacing
   }
-
 
   geo.quadstrip(lastEdge, recordHoleUpper);//close remaining space between last groove and center hole
 }
