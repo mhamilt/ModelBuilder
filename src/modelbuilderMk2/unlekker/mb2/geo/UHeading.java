@@ -2,10 +2,11 @@ package unlekker.mb2.geo;
 
 import java.util.ArrayList;
 
-import org.apache.commons.math.geometry.CardanEulerSingularityException;
-import org.apache.commons.math.geometry.Rotation;
-import org.apache.commons.math.geometry.RotationOrder;
-import org.apache.commons.math.geometry.Vector3D;
+// import org.apache.commons.math.geometry.CardanEulerSingularityException;
+// import org.apache.commons.math.geometry.Rotation;
+// import org.apache.commons.math.geometry.RotationOrder;
+// import org.apache.commons.math.geometry.Vector3D;
+import org.apache.commons.math3.geometry.euclidean.threed.*;
 
 import unlekker.mb2.geo.*;
 import unlekker.mb2.util.*;

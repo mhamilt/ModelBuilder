@@ -10,10 +10,12 @@ import java.util.*;
 
 import processing.core.PApplet;
 import processing.core.PGraphics;
-import unlekker.mb2.geo.UFace;
-import unlekker.mb2.geo.UGeo;
-import unlekker.mb2.geo.UVertex;
-import unlekker.mb2.geo.UVertexList;
+// import unlekker.mb2.util.UConst;
+// import unlekker.mb2.util.UFile;
+import unlekker.mb2.geo.*;
+// import unlekker.mb2.geo.UGeo;
+// import unlekker.mb2.geo.UVertex;
+// import unlekker.mb2.geo.UVertexList;
 
 /**
  * 
@@ -58,18 +60,18 @@ public class UMB implements UConst {
   
   public static int DEBUGLEVEL=10;
   
-  static {
-    if(!libraryPrinted) {
-      UMBStartTime=System.currentTimeMillis();
-//      UMB.logDivider(VERSION);
-//      UMB.log(CREDIT);
-//      UMB.logDivider();
+//   static {
+//     if(!libraryPrinted) {
+//       UMBStartTime=System.currentTimeMillis();
+// //      UMB.logDivider(VERSION);
+// //      UMB.log(CREDIT);
+// //      UMB.logDivider();
       
-      libraryPrinted=true;
-      dateStrFormat=new SimpleDateFormat("yyyy.MM.dd HH:mm:ss",Locale.US);
-    }
+//       libraryPrinted=true;
+//       dateStrFormat=new SimpleDateFormat("yyyy.MM.dd HH:mm:ss",Locale.US);
+//     }
     
-  }
+//   }
 
   //////////////////////////////////////////////////
   
@@ -1247,8 +1249,8 @@ public class UMB implements UConst {
   private static long UMBStartTime;
   
   public static void setRnd(URnd rnd) {
-    UMB.rnd=rnd;
-    UMB.UMB=new UMB();
+    // UMB.rnd=rnd;
+    // UMB.UMB=new UMB();
   }
   
   public static float sign(float in) {
@@ -1341,7 +1343,7 @@ public class UMB implements UConst {
   // SET + GET PAPPLET AND PGRAPHICS 
 
   public static void setPApplet(PApplet papplet) {
-    setPApplet(papplet,true);
+    // setPApplet(papplet,true);
   }
 
   public static void setPApplet(PApplet papplet,boolean useGraphics) {
@@ -1383,12 +1385,12 @@ public class UMB implements UConst {
   }
 
   public static void saveStrings(String filename,ArrayList<String> out) {
-    if(papplet!=null) {
-      String s[]=out.toArray(new String[out.size()]);
-      papplet.saveStrings(filename, s);
-      logDivider("Saved strings: "+filename+
-          " ("+s.length+" strings)");
-    }
+    // if(papplet!=null) {
+    //   String s[]=out.toArray(new String[out.size()]);
+    //   papplet.saveStrings(filename, s);
+    //   logDivider("Saved strings: "+filename+
+    //       " ("+s.length+" strings)");
+    // }
   }
 
   
@@ -1397,31 +1399,31 @@ public class UMB implements UConst {
   }
 
   public static void setGraphics(PApplet papplet) {
-    setGraphics(papplet.g);
+    // setGraphics(papplet.g);
   }
 
   public static void setGraphics(PGraphics gg) {
-    try {
-      UMB.g=gg;
-      if((g==null)) return;
+    // try {
+    //   UMB.g=gg;
+    //   if((g==null)) return;
       
-      if(PApplet.P3D.indexOf("core")>-1) {
-        isGraphics3D=false;
-      }
+    //   if(PApplet.P3D.indexOf("core")>-1) {
+    //     isGraphics3D=false;
+    //   }
       
-      else if(gg.is3D()) {
-        UMB.g3d=(processing.opengl.PGraphics3D)gg;
-        isGraphics3D=true;
-      }
-      else isGraphics3D=false;
-    } catch (Exception e) {
-      isGraphics3D=false;
-      e.printStackTrace();
-    }
+    //   else if(gg.is3D()) {
+    //     UMB.g3d=(processing.opengl.PGraphics3D)gg;
+    //     isGraphics3D=true;
+    //   }
+    //   else isGraphics3D=false;
+    // } catch (Exception e) {
+    //   isGraphics3D=false;
+    //   e.printStackTrace();
+    // }
     
-    log("UMB.setGraphics: "+
-        g.getClass().getSimpleName()+
-        " (is3D="+isGraphics3D+")");
+    // log("UMB.setGraphics: "+
+    //     g.getClass().getSimpleName()+
+    //     " (is3D="+isGraphics3D+")");
   }
 
   public static UMB depth() {
@@ -1438,37 +1440,37 @@ public class UMB implements UConst {
     return UMB.UMB;
   }
 
-  //////////////////////////////////////////
-  // LOGGING
+//   //////////////////////////////////////////
+//   // LOGGING
   
   public static UMB log(String s) {
-    if(s.indexOf(NEWLN)>-1) {
-      int pos=s.indexOf(NEWLN);
-//      log("pos "+pos+" "+s.substring(0,pos)+"|");
-      while(pos>-1) {
-        log(s.substring(0,pos));
-        s=s.substring(pos+1);
-        pos=s.indexOf(NEWLN,pos+1);
-      }
-      if(s.length()>0) log(s);
-    }
-    else System.out.println(timeStr()+" "+s);
+//     if(s.indexOf(NEWLN)>-1) {
+//       int pos=s.indexOf(NEWLN);
+// //      log("pos "+pos+" "+s.substring(0,pos)+"|");
+//       while(pos>-1) {
+//         log(s.substring(0,pos));
+//         s=s.substring(pos+1);
+//         pos=s.indexOf(NEWLN,pos+1);
+//       }
+//       if(s.length()>0) log(s);
+//     }
+//     else System.out.println(timeStr()+" "+s);
     
     return UMB.UMB;
   }
 
   public static void logf(String s,Object... arg) {
-    log(String.format(Locale.US,s, arg));
+    // log(String.format(Locale.US,s, arg));
   }
 
   
   public static <T> void log(T s[]) {
-    StringBuffer buf=strBufGet();
-    for(T ss:s) {
-      if(buf.length()>0) buf.append(COMMA);
-      buf.append(ss.toString());
-    }
-    log("["+strBufDispose(buf)+"]");
+    // StringBuffer buf=strBufGet();
+    // for(T ss:s) {
+    //   if(buf.length()>0) buf.append(COMMA);
+    //   buf.append(ss.toString());
+    // }
+    // log("["+strBufDispose(buf)+"]");
   }
 
   public static <T> T first(ArrayList<T> input) {
@@ -1554,19 +1556,17 @@ public class UMB implements UConst {
     int s=(int)(t/SECONDMSEC);
     
     String str=strf(TIMESTR,hr,m,s);
+   
     str="";
     
     if(hr>0) str+=nf(hr,2)+":";
       str+=strf("%s:%s",nf(m,2),nf(s,2));
     
-//      buf.append(nf(hr,2)).append(':').append(nf(m,2)).append(':').append(nf(s,2));
-//      return buf.toString();
     return str;
   }
 
   public static String timeStr() {
     return timeStr(System.currentTimeMillis());
-//    return timeStr2(Calendar.getInstance());//.getTimeInMillis());
   }
   
   public static String timeStr2(Calendar c) {
@@ -1615,8 +1615,8 @@ public class UMB implements UConst {
     return UFile.nextFile(path, pre, ext);
   }
   
-  //////////////////////////////////////////
-  // NUMBER FORMATTING
+//   //////////////////////////////////////////
+//   // NUMBER FORMATTING
   
   private static NumberFormat formatFloat, formatInt;
   private static char numberChar[]=new char[] {'0', '1', '2', '3', '4', '5',

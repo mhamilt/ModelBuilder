@@ -28,9 +28,9 @@
 package ComputationalGeometry;
 
 import java.util.ArrayList;
-
 import processing.core.*;
 
+// public class IsoContour{
 public class IsoContour implements PConstants{
  
   PVector start, end;
@@ -85,7 +85,7 @@ public class IsoContour implements PConstants{
   }
   
   public void construct(){
-    vertexValues = new float[ (cols+1) * (rows+1)];
+    float[] vertexValues = new float[ (cols+1) * (rows+1)];
     vertexes = new PVector[ (cols+1) * (rows+1)];
     float colDistance = (end.x - start.x)/cols;
     float rowDistance = (end.x - start.y)/rows;

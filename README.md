@@ -32,6 +32,12 @@ First successful compilation
 -cp "/Applications/Processing.app/Contents/Java/core.jar:/Users/admin/Documents/GitHub/ModelBuilder-assemble/geomerative/src/temp/geomerative.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-tools.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-tests.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-test-sources.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-sources.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-javadoc.jar:/Users/admin/Documents/GitHub/ModelBuilder-assemble/libAHOData/poly2tri.jar:/Users/admin/Documents/GitHub/ModelBuilder-assemble/libAHOData/apacheCommonsMathRotations.jar:/Users/admin/Documents/GitHub/ModelBuilder-assemble/libAHOData/modelbuilderMk2.jar" -d ./temp/ **/*.java
 ```
 
+then go to build directory
+
+```sh
+jar cvf modelbuilderMk2.jar *
+```
+
 ## Old ModelbuilderMk2 Notes
 
 ModelbuilderMk2 (previously Modelbuilder) is a computational geometry library for Processing. Its focus is to facilitate parametric and generative modeling of geometry, while minimizng complex math and repetitive code where possible. The library is based on a set of simplified data structures with corresponding workflows:

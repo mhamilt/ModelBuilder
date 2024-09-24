@@ -31,8 +31,8 @@ public class UNav3D extends UMB {
   }
   
   public void registerEvents() {
-    MouseWheelInput mw=new MouseWheelInput();
-    papplet.addMouseWheelListener(mw);
+    // MouseWheelInput mw=new MouseWheelInput();
+    // papplet.addMouseWheelListener(mw);
     
     papplet.registerMethod("mouseEvent",this);
     papplet.registerMethod("keyEvent",this);
