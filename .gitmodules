@@ -7,3 +7,12 @@
 [submodule "geomerative"]
 	path = geomerative
 	url = https://github.com/rikrd/geomerative.git
+[submodule "src/external/processing-core"]
+	path = src/external/processing-core
+	url = https://github.com/micycle1/processing-core-4
+[submodule "src/external/geomerative"]
+	path = src/external/geomerative
+	url = https://github.com/rikrd/geomerative
+[submodule "src/external/ComputationalGeometryP5"]
+	path = src/external/ComputationalGeometryP5
+	url = https://github.com/cloudlab/ComputationalGeometry-P5
