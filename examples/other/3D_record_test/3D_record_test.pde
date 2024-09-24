@@ -1,7 +1,7 @@
-//sine tests
-//by Amanda Ghassaei
-//Dec 2012
-//https://www.instructables.com/id/3D-Printed-Record/
+// sine tests
+// by Amanda Ghassaei
+// Dec 2012
+// https://www.instructables.com/id/3D-Printed-Record/
 //-----------------------------------------------------------------------------
 /*
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@ UGeo geo;             //storage for stl geometry
 //-----------------------------------------------------------------------------
 //variables
 float theta;               // angle variable
-float thetaIter = 50;      // how many values of theta per cycle
+float thetaIter = 1000;    // steps per TWO PI, sampling rate (angular frequency)
 float radius;              // variable to calculate radius of grooves
 float diameter = 7;        // diameter of record in inches
 float innerHole = 0.286;   // diameter of center hole in inches
@@ -31,7 +31,7 @@ float innerRad = 2.35;     // radius of innermost groove in inches
 float outerRad = 5.75;     // radius of outermost groove in inches
 float grooveSpacing = 20;  // pixel spacing of grooves
 float bevel = 2;           // pixel width of groove bevel
-int numberOfCopies = 2;
+
 //-----------------------------------------------------------------------------
 //record parameters
 float recordHeight = 0.08; // height of record in inches
@@ -39,11 +39,13 @@ float recordBottom = 0;    // height of bottom of record
 //-----------------------------------------------------------------------------
 //parameters to test
 float amplitudes[] = {2, 4, 8};     //in units of 16 micron steps (remember this is the amplitude of the sine wave, the total vert displacement will be twice this)
-float frequencies[] = {1000, 500};  //cycles per rotation
+float frequencies[] = {440};  //cycles per rotation
 float grooveDepths[] = {0.5, 1};    //how many 16 microns steps below the surface of the record to print the uppermost point of the groove
 float grooveWidths[] = {1, 2, 3};   //in 600dpi pixels
 float incrNum = TWO_PI / thetaIter; //calculcate inrementation amount
 int grooveNum = 0;                  //variable for keeping track of how long this will take
+int numberOfCopies = 1;
+int totalNumGrooves = amplitudes.length * frequencies.length * grooveDepths.length * grooveWidths.length * numberOfCopies; 
 //-----------------------------------------------------------------------------
 void setup()
 {
@@ -68,10 +70,10 @@ void setUpVariables()
 
   grooveSpacing /= dpi;
   bevel /= dpi;
-  for (byte i = 0; i < 2; i++)
+  for (byte i = 0; i < amplitudes.length - 1; i++)
   {
-    amplitudes[i]   = amplitudes[i]*micronsPerLayer/micronsPerInch;
-    grooveDepths[i] = grooveDepths[i]*micronsPerLayer/micronsPerInch;
+    amplitudes  [i]  = amplitudes[i]  * micronsPerLayer/micronsPerInch;
+    grooveDepths[i]  = grooveDepths[i]* micronsPerLayer/micronsPerInch;
     grooveWidths[i] /= dpi;
   }
   int i = 2;
@@ -191,7 +193,9 @@ void drawGrooves()
             //tell me how much longer
             grooveNum++;
             print(grooveNum);
-            println(" of 72 grooves drawn");
+            print(" of ");
+            print(totalNumGrooves); 
+            println(" grooves drawn");
           }
           radius -= 2*grooveSpacing;//extra spacing
         }
