@@ -43,6 +43,7 @@ jar cvf modelbuilderMk2.jar *
 - https://archive.apache.org/dist/commons/math/binaries/commons-math3-3.6.1-bin.zip
 - https://github.com/mhamilt/ModelBuilder/releases/download/0.9.0/apacheCommonsMathRotations.jar.zip
 - https://github.com/mhamilt/ModelBuilder/releases/download/0.9.0/poly2tri.jar.zip
+- https://github.com/mhamilt/ModelBuilder/releases/download/0.9.0/ant-contrib-1.0b3.zip
   
 ## Old ModelbuilderMk2 Notes
 
