@@ -17,6 +17,9 @@ cd lib
 jar cvf modelbuilderMk2.jar *
 cp modelbuilderMk2.jar ~/Documents/Processing/libraries/modelbuilderMk2/library/
 cd -
+cp libs/poly2tri.jar ~/Documents/Processing/libraries/modelbuilderMk2/library/
+cp libs/geomerative.jar ~/Documents/Processing/libraries/modelbuilderMk2/library/
+
 
 # 5. move everything into the library structure
 
