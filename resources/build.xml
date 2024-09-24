@@ -41,7 +41,7 @@
 	
 	
 	<property name="project.jar.name" value="${project.name}.jar"/>
-	<property name="project.src" location="src"/>
+	<property name="project.src" location="src/modelbuilderMk2"/>
 	<property name="project.tmp" location="tmp"/>
 	<property name="project.web" location="web"/>
 	<property name="project.data" location="data"/>
