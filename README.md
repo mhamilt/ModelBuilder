@@ -23,7 +23,6 @@ First successful compilation
 
 ```sh
 /Applications/Processing.app/Contents/PlugIns/jdk-17.0.8+7/Contents/Home/bin/javac -Xlint:none -cp "/Applications/Processing.app/Contents/Java/core.jar:/Users/admin/Documents/GitHub/ModelBuilder-assemble/geomerative/src/temp/geomerative.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-tools.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-tests.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-test-sources.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-sources.jar:/Users/admin/Downloads/commons-math3-3.6.1/commons-math3-3.6.1-javadoc.jar:/Users/admin/Documents/GitHub/ModelBuilder-assemble/libAHOData/poly2tri.jar:/Users/admin/Documents/GitHub/ModelBuilder-assemble/libAHOData/apacheCommonsMathRotations.jar:/Users/admin/Documents/GitHub/ModelBuilder-assemble/libAHOData/modelbuilderMk2.jar" -d ./temp/ **/*.java
-
 ```
 
 
