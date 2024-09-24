@@ -10,13 +10,7 @@ import java.util.*;
 
 import processing.core.PApplet;
 import processing.core.PGraphics;
-// import unlekker.mb2.util.UConst;
-// import unlekker.mb2.util.UFile;
 import unlekker.mb2.geo.*;
-// import unlekker.mb2.geo.UGeo;
-// import unlekker.mb2.geo.UVertex;
-// import unlekker.mb2.geo.UVertexList;
-
 /**
  * 
  * UMB is the base class for most of the classes in ModelbuilderMk2, meaning that
@@ -60,18 +54,17 @@ public class UMB implements UConst {
   
   public static int DEBUGLEVEL=10;
   
-//   static {
-//     if(!libraryPrinted) {
-//       UMBStartTime=System.currentTimeMillis();
-// //      UMB.logDivider(VERSION);
-// //      UMB.log(CREDIT);
-// //      UMB.logDivider();
+  static {
+    if(!libraryPrinted) {
+      UMBStartTime=System.currentTimeMillis();
+     UMB.logDivider(VERSION);
+     UMB.log(CREDIT);
+     UMB.logDivider();
       
-//       libraryPrinted=true;
-//       dateStrFormat=new SimpleDateFormat("yyyy.MM.dd HH:mm:ss",Locale.US);
-//     }
-    
-//   }
+      libraryPrinted=true;
+      dateStrFormat=new SimpleDateFormat("yyyy.MM.dd HH:mm:ss",Locale.US);
+    }
+  }
 
   //////////////////////////////////////////////////
   
@@ -1343,7 +1336,7 @@ public class UMB implements UConst {
   // SET + GET PAPPLET AND PGRAPHICS 
 
   public static void setPApplet(PApplet papplet) {
-    // setPApplet(papplet,true);
+    setPApplet(papplet,true);
   }
 
   public static void setPApplet(PApplet papplet,boolean useGraphics) {
@@ -1399,31 +1392,31 @@ public class UMB implements UConst {
   }
 
   public static void setGraphics(PApplet papplet) {
-    // setGraphics(papplet.g);
+    setGraphics(papplet.g);
   }
 
   public static void setGraphics(PGraphics gg) {
-    // try {
-    //   UMB.g=gg;
-    //   if((g==null)) return;
+    try {
+      UMB.g=gg;
+      if((g==null)) return;
       
-    //   if(PApplet.P3D.indexOf("core")>-1) {
-    //     isGraphics3D=false;
-    //   }
+      if(PApplet.P3D.indexOf("core")>-1) {
+        isGraphics3D=false;
+      }
       
-    //   else if(gg.is3D()) {
-    //     UMB.g3d=(processing.opengl.PGraphics3D)gg;
-    //     isGraphics3D=true;
-    //   }
-    //   else isGraphics3D=false;
-    // } catch (Exception e) {
-    //   isGraphics3D=false;
-    //   e.printStackTrace();
-    // }
+      else if(gg.is3D()) {
+        UMB.g3d=(processing.opengl.PGraphics3D)gg;
+        isGraphics3D=true;
+      }
+      else isGraphics3D=false;
+    } catch (Exception e) {
+      isGraphics3D=false;
+      e.printStackTrace();
+    }
     
-    // log("UMB.setGraphics: "+
-    //     g.getClass().getSimpleName()+
-    //     " (is3D="+isGraphics3D+")");
+    log("UMB.setGraphics: "+
+        g.getClass().getSimpleName()+
+        " (is3D="+isGraphics3D+")");
   }
 
   public static UMB depth() {
