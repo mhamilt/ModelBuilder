@@ -42,6 +42,8 @@ then go to build directory
 jar cvf modelbuilderMk2.jar *
 ```
 
+jar cvf geomerative.jar $(ls geomerative/*.class)
+
 
 ## Dependency Links
 
@@ -49,6 +51,7 @@ jar cvf modelbuilderMk2.jar *
 - https://github.com/mhamilt/ModelBuilder/releases/download/0.9.0/apacheCommonsMathRotations.jar.zip
 - https://github.com/mhamilt/ModelBuilder/releases/download/0.9.0/poly2tri.jar.zip
 - https://github.com/mhamilt/ModelBuilder/releases/download/0.9.0/ant-contrib-1.0b3.zip
+- https://github.com/mhamilt/ModelBuilder/releases/download/0.9.0/geomerative.zip
   
 ## Old ModelbuilderMk2 Notes
 
