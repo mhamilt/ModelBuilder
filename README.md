@@ -37,6 +37,13 @@ then go to build directory
 jar cvf modelbuilderMk2.jar *
 ```
 
+
+## Dependency Links
+
+- https://archive.apache.org/dist/commons/math/binaries/commons-math3-3.6.1-bin.zip
+- https://github.com/mhamilt/ModelBuilder/releases/download/0.9.0/apacheCommonsMathRotations.jar.zip
+- https://github.com/mhamilt/ModelBuilder/releases/download/0.9.0/poly2tri.jar.zip
+  
 ## Old ModelbuilderMk2 Notes
 
 ModelbuilderMk2 (previously Modelbuilder) is a computational geometry library for Processing. Its focus is to facilitate parametric and generative modeling of geometry, while minimizng complex math and repetitive code where possible. The library is based on a set of simplified data structures with corresponding workflows:
